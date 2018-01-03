@@ -59,6 +59,39 @@ class Robinhood {
 		else
 			return $res;
     }
+
+    function get_endpoint($endpoint=null) 
+    {
+        $res = $this->session->get($this->endpoints[$endpoint]);
+        return json_decode($res->body, true);
+    }
+    function get_custom_endpoint($endpoint=null) 
+    {
+        $res = $this->session->get($endpoint);
+        return json_decode($res->body, true);
+    }
     
 }
+
+function kwargs_method_call( $obj, $method, $ordered, $named ) {
+    
+    $num_ordered = count($ordered);
+    $count = 1;
+
+    $refFunc = new ReflectionMethod($obj, $method);
+    foreach( $refFunc->getParameters() as $param ){
+        //invokes ReflectionParameter::__toString
+        if( $count > $num_ordered ) {
+            $name = $param->name;
+            $default = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
+            $ordered[] = @$named[$name] ?: $default;
+        }
+        
+        $count ++;
+    }
+   
+    $callable = [$obj, $method]; 
+    return call_user_func_array($callable, $ordered);
+}
+
 ?>
