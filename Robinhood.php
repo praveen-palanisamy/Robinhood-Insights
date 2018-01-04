@@ -70,6 +70,73 @@ class Robinhood {
         $res = $this->session->get($endpoint);
         return json_decode($res->body, true);
     }
+    function investment_profile() {
+        $this->session->get($this->endpoints['investment_profile']);
+    }
+    function instruments($stock=null) {
+        if (($stock == null)) {
+            $res = $this->session->get($this->endpoints['instruments']);
+        }
+        else {
+            $res = kwargs_method_call($this->session, 'get', [$this->endpoints['instruments']], ["params" => ['query' => $stock->upper()]]);
+        }
+        $res = $res->json();
+        return $res['results'];
+    }
+    
+    function get_quote($stock=null) {
+        $data = $this->quote_data($stock);
+        return $data['symbol'];
+    }
+    function print_quote($stock=null) {
+        $data = $this->quote_data($stock);
+        pyjslib_printnl($data['symbol'] . ': $' . $data['last_trade_price']);
+    }
+    function print_quotes($stocks) {
+        foreach( pyjslib_range(count($stocks)) as $i ) {
+            $this->print_quote($stocks[$i]);
+        }
+    }
+    function ask_price($stock=null) {
+        return $this->quote_data($stock)['ask_price'];
+    }
+    function ask_size($stock=null) {
+        return $this->quote_data($stock)['ask_size'];
+    }
+    function bid_price($stock=null) {
+        return $this->quote_data($stock)['bid_price'];
+    }
+    function bid_size($stock=null) {
+        return $this->quote_data($stock)['bid_size'];
+    }
+    function last_trade_price($stock=null) {
+        return $this->quote_data($stock)['last_trade_price'];
+    }
+    
+    function previous_close($stock=null) {
+        return $this->quote_data($stock)['previous_close'];
+    }
+    function previous_close_date($stock=null) {
+        return $this->quote_data($stock)['previous_close_date'];
+    }
+    function adjusted_previous_close($stock=null) {
+        return $this->quote_data($stock)['adjusted_previous_close'];
+    }
+    function symbol($stock=null) {
+        return $this->quote_data($stock)['symbol'];
+    }
+    function last_updated_at($stock=null) {
+        return $this->quote_data($stock)['updated_at'];
+    }
+    
+    function place_buy_order($instrument,$quantity,$bid_price=null) {
+        $transaction = 'buy';
+        return $this->place_order($instrument, $quantity, $bid_price, $transaction);
+    }
+    function place_sell_order($instrument,$quantity,$bid_price=null) {
+        $transaction = 'sell';
+        return $this->place_order($instrument, $quantity, $bid_price, $transaction);
+    }
     
 }
 
