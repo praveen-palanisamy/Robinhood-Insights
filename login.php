@@ -82,7 +82,38 @@
 												if(isset($_SESSION['mfa_needed']))
 												{
 										?>
-													
+													<!-- sample modal content -->
+													<!-- MFA modal -->
+													<script type="text/javascript">
+													  function mfa_submit() {
+														document.getElementById("mfa").submit();
+													   }    
+													  </script>
+													<div id="mfa_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+																	<h5 class="modal-title">Enter the Robinhood code you received (SMS)</h5>
+																</div>
+																<div class="modal-body">
+																	<form id="mfa" action="robinhood-export.php" method="post">
+																		<div class="form-group">
+																			<label for="mfa_te" class="control-label mb-10">Authentication Code</label>
+																			<input name="mfa_code" type="number" class="form-control" id="mfa_code">
+																		</div>
+																		
+																	</form>
+																</div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+																	<button onclick="mfa_submit()" type="submit" class="btn btn-danger">Submit</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!--/ MFA modal -->
+													<!-- PHP trigger modal -->
 													<script> $('#mfa_modal').modal('show');</script>
 										<?php
 
