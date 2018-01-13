@@ -97,7 +97,60 @@ $queued_count = 0;
 $orders = $robinhood->get_endpoint('orders');
 $orders = var_export($orders, false);// 
 var_dump($orders);
+$paginated = true;
+$page = 0;
+while ($paginated) 
+{
+	foreach( array_values($orders['results']) as $i => $order) 
+	{
+        $executions = $order['executions'];
+        $instrument = $robinhood->get_custom_endpoint($order['instrument']);
+        $fields[($i + ($page * 100))]['symbol'] = $instrument['symbol'];
+		foreach( array_keys($order) as $key =>  $value) 
+		{
+            if (($value != 'executions')) {
+                $fields[($i + ($page * 100))][$value] = $order[$value];
+            }
+        }
+		if (($order['state'] == 'filled')) 
+		{
+            $trade_count += 1;
+			foreach( array_keys($executions[0]) as $key =>  $value) 
+			{
+                $fields[($i + ($page * 100))][$value] = $executions[0][$value];
+            }
+        }
+		else if (($order['state'] == 'queued')) 
+		{
+            $queued_count += 1;
+        }
+    }
+	print_r(sprintf("Summary #", $page, ":", "queued_count=", $queued_count));
+	if (($orders['next'] != null)) 
+	//if (isset($orders['next']))
+	{
+		$page = ($page + 1);
+		$orders = $robinhood->get_custom_endpoint($orders['next']);
+		$orders = var_export($orders, false);
 
+		// Handle error cases when $orders turns out to be not valid
+		if (isset($orders['results']))
+			continue;
+		else
+		{
+			print_r("Fetching next pages of orders failed.");
+			$paginated = false;
+		}
+	}
+	else 
+	{
+        $paginated = false;
+    }
+}
+
+//if ($args->profit) {
+//    $profit_csv = new profit_extractor($csv, $filename);
+//}
 
 
 }//logged in
