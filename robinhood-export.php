@@ -147,7 +147,31 @@ while ($paginated)
         $paginated = false;
     }
 }
+if (($trade_count > 0) || ($queued_count > 0)) 
+{
+    print_r(sprintf('%d queued trades and %d executed trades found in your account.', $queued_count, $trade_count));
+}
+else {
+    print('No trade history found in your account.');
+    exit;
+}
 
+$keys = array_keys($fields[0]);
+ksort($keys);
+$csv = ','. $keys . '\n';
+foreach( $fields as $row ) 
+{
+	foreach( array_keys($keys) as $idx =>  $key) 
+	{
+        if (($idx > 0)) {
+            $csv .= ',';
+        }
+        $csv += (string)$fields[$row][$key];
+    }
+    $csv .= '\n';
+}
+
+print_r($csv);
 //if ($args->profit) {
 //    $profit_csv = new profit_extractor($csv, $filename);
 //}
