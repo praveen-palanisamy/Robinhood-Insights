@@ -1,6 +1,28 @@
 <?php
 session_start();
+/*
+* Testing table print
+ */
+function print_row(&$item) {
+  echo('<tr>');
+  array_walk($item, 'print_cell');
+  echo('</tr>');
+}
 
+function print_cell(&$item) {
+  echo('<td>');
+  echo($item);
+  echo('</td>');
+}
+function print_head(&$item) {
+  echo('<th>');
+  echo($item);
+  echo('</th>');
+}
+
+/*
+ * End Testing Table print
+ */
 print("<pre>");
 print("\n dashboard:\n");
 if (count($_SESSION['txns']) > 0) 
@@ -58,7 +80,24 @@ $(document).ready(function() {
 		]
 	} );
 } );
+/*
+	var txns_js = <?php echo '{ "data":'  .  json_encode($_SESSION['txns']) .  '}'; ?>;
+	$(document).ready(function() {
+	$('#example').DataTable({
+		"txns_data": txns_js,
+		"txns_cols":[
+				<?php
+				for ($i=0 ;$i < count($cols)-1; $i++)
+				{
+					echo '{ "data":"' . $cols[$i] . '"},';  
+				}
 
+				echo '{ "data":"' . $cols[$i] . '"}';//Last col item without trailing comma  
+				?>
+				]
+			});
+	});
+*/
  
 </script>
 <!-- Main Content -->
