@@ -132,17 +132,17 @@ $(document).ready(function() {
 											<table id="example" class="table table-hover display  pb-30" >
 												<thead>
 													<tr>
-													
+													<?php array_walk($cols, 'print_head'); ?>
 													</tr>
 												</thead>
 
 												<tfoot>
 													<tr>
-													
+													<?php array_walk($cols, 'print_head'); ?>
 													</tr>
 												</tfoot>
 												<tbody>
-													
+													<?php array_walk($txns, 'print_row'); ?>
 												</tbody>
 											</table>
 										</div>
