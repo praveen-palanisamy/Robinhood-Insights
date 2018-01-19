@@ -163,12 +163,12 @@ $(document).ready(function() {
 		<table id="example" class="display" cellspacing="0" width="100%">
 			<thead>
 				<tr>
-				
+				<?php array_walk($cols, 'print_head'); ?>
 				</tr>
 			</thead>
 			<tfoot>
 				<tr>
-				
+				<?php array_walk($cols, 'print_head'); ?>
 				</tr>
 			</tfoot>
 	</table>
