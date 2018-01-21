@@ -1,8 +1,8 @@
-### Robinhood-Insights
+### Robinhood-Insights![Mockup UI of the dashboard](./img/dashboard.png)
+
+> A view of the planned dashboard
 
 [Work-in-Progress. Contributions are welcome]
-
-![Mockup UI of the dashboard](./img/dashboard.png)
 
 ##### Get Actionable insights into your Robinhood portfolio
 
