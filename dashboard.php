@@ -26,17 +26,13 @@ function print_head(&$item) {
 /*
  * End Testing Table print
  */
-print("<pre>");
-print("\n dashboard:\n");
 if (count($_SESSION['txns']) > 0) 
 {
 	    print_r(sprintf('%d trades found in your account.', count($_SESSION['txns'])));
 		print("\n");
 		$txns = &$_SESSION['txns'];
 		$cols = array_keys($_SESSION['txns'][0]);
-		print_r(json_encode($cols));
-
-		print("\n End array keys\n");
+		//print_r(json_encode($cols));
 }
 
 /* Uncomment to write the transactions to a file
@@ -163,20 +159,6 @@ $(document).ready(function() {
 			
 		</div>
 		<!-- /Main Content -->
-
-													
-
-		<table id="example" class="display" cellspacing="0" width="100%">
-			<thead>
-				<tr>
-				<?php array_walk($cols, 'print_head'); ?>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-				<?php array_walk($cols, 'print_head'); ?>
-				</tr>
-			</tfoot>
-	</table>
+		
 </body>
 </html>
