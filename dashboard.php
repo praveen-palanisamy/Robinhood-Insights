@@ -10,9 +10,12 @@ function print_row(&$item) {
 }
 
 function print_cell(&$item) {
+  if($item != null)
+  {
   echo('<td>');
   echo($item);
   echo('</td>');
+  }
 }
 function print_head(&$item) {
   echo('<th>');
@@ -35,11 +38,14 @@ if (count($_SESSION['txns']) > 0)
 
 		print("\n End array keys\n");
 }
+
+/* Uncomment to write the transactions to a file
 print("\nWriting to txns.json...\n");
 $fp = fopen('txns.json', 'w');
 fwrite($fp, json_encode($_SESSION['txns']));
 fclose($fp);
 print("\nFinished writing to txns.json\n");
+*/
 
 /*
 echo "<table>";
