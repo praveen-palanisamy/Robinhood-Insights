@@ -17,12 +17,12 @@ $(document).ready(function(){
 $(window).load(function(){
 	window.setTimeout(function(){
 		$.toast({
-			heading: 'Welcome to Elmer',
-			text: 'Use the predefined ones, or specify a custom position object.',
+			heading: 'Welcome!',
+			text: 'This is your Dashboard. Gives you insights into your Robinhood Portfolio',
 			position: 'bottom-left',
 			loaderBg:'#f8b32d',
 			icon: 'success',
-			hideAfter: 3500, 
+			hideAfter: 5500, 
 			stack: 6
 		});
 	}, 3000);
@@ -163,64 +163,154 @@ var echartsConfig = function() {
 		eChart_2.resize();
 	}
 	if( $('#e_chart_3').length > 0 ){
-		var eChart_3 = echarts.init(document.getElementById('e_chart_3'));
-		var option3 = {
-			tooltip : {
-				trigger: 'item',
-				formatter: "{a} <br/>{b} : {c} ({d}%)",
-				backgroundColor: 'rgba(33,33,33,1)',
-				borderRadius:0,
-				padding:10,
-				textStyle: {
-					color: '#fff',
-					fontStyle: 'normal',
-					fontWeight: 'normal',
-					fontFamily: "'Roboto', sans-serif",
-					fontSize: 12
-				}	
+	var eChart_5 = echarts.init(document.getElementById('e_chart_3'));
+	var num_items_to_show = 10;
+	var xData = function(){
+		var data=[];
+		for (var i =0; i<num_items_to_show; i++)
+		{
+			data.push(portfolio[i].symbol);//Sym name
+		}
+		return data;
+	}();
+
+	var option5 = {
+		tooltip: {
+			trigger: 'axis',
+			backgroundColor: 'rgba(33,33,33,1)',
+			borderRadius:0,
+			padding:10,
+			axisPointer: {
+				type: 'cross',
+				label: {
+					backgroundColor: 'rgba(33,33,33,1)'
+				}
 			},
-			legend: {
-				show:false
-			},
-			toolbox: {
-				show : false,
-			},
-			calculable : true,
-			itemStyle: {
-				 normal: {
-					 shadowBlur: 5,
-					 shadowColor: 'rgba(0, 0, 0, 0.5)'
-				 }
-			},
-			series : [
-				{
-					name:'Advertising',
-					type:'pie',
-					radius : '80%',
-					center : ['50%', '50%'],
-					roseType : 'radius',
-					color: ['#119dd2', '#d36ee8', '#667add'],
-					label: {
-						normal: {
-							fontFamily: "'Roboto', sans-serif",
-							fontSize: 12
-						}
-					},
-					data:[
-						{value:335, name:'Active'},
-						{value:310, name:'Closed'},
-						{value:274, name:'Hold'},
-					].sort(function (a, b) { return a.value - b.value; }),
-				},
-			],
-			animationType: 'scale',
-			animationEasing: 'elasticOut',
-			animationDelay: function (idx) {
-				return Math.random() * 1000;
+			textStyle: {
+				color: '#fff',
+				fontStyle: 'normal',
+				fontWeight: 'normal',
+				fontFamily: "'Roboto', sans-serif",
+				fontSize: 12
 			}	
-		};
-		eChart_3.setOption(option3);
-		eChart_3.resize();
+		},
+		"grid": {
+			show:false,
+			top: 30,
+			bottom: 10,
+			containLabel: true,
+		}, 
+		"legend": {
+			"x": "right", 
+			"data": [ ]
+		}, 
+		"calculable": true, 
+		"xAxis": [
+			{
+				type: "category", 
+				splitLine: {
+					"show": false
+				}, 
+				axisLine: {
+					show:false
+				},
+				axisLabel: {
+					textStyle: {
+						color: '#878787',
+						fontStyle: 'normal',
+						fontWeight: 'normal',
+						fontFamily: "'Roboto', sans-serif",
+						fontSize: 12
+					}
+				},
+				axisTick: {
+					"show": false
+				}, 
+				splitArea: {
+					"show": false
+				}, 
+				data: xData,
+			}
+		], 
+		"yAxis": [
+			{
+				type: "value", 
+				splitLine: {
+					"show": false
+				}, 
+				axisLine: {
+					show:false
+				},
+				axisLabel: {
+					textStyle: {
+						color: '#878787',
+						fontStyle: 'normal',
+						fontWeight: 'normal',
+						fontFamily: "'Roboto', sans-serif",
+						fontSize: 12
+					}
+				},
+				axisTick: {
+					"show": false
+				}, 
+				splitArea: {
+					"show": false
+				}
+			}
+		], 
+		"series": [
+			{
+				"name": "Short-term Holding", 
+				"type": "bar", 
+				"stack": "split", 
+				"barMaxWidth": 50, 
+				"barGap": "10%", 
+				"itemStyle": {
+					"normal": {
+						"barBorderRadius": 0, 
+						"color": '#667add', 
+						"label": {
+							"show": true, 
+							"textStyle": {
+								"color": "#fff"
+							}, 
+							"position": "insideTop",
+							formatter : function(p) {
+								return p.value > 0 ? (p.value ): '';
+							}
+						}
+					}
+				}, 
+
+				"data": portfolio.map(elem => elem.num_shares - elem.num_long_term_holdings).slice(0,num_items_to_show)
+				, 
+			}, 
+			{
+				"name": "Long-term Holding", 
+				"type": "bar", 
+				"stack": "split", 
+				"itemStyle": {
+					"normal": {
+						"color": '#119dd2', 
+						"barBorderRadius": 0, 
+						"label": {
+							"show": true, 
+							"position": "top",
+							formatter : function(p) {
+								return p.value > 0 ? (
+										p.value + '')
+										: '';
+							}
+						}
+					}
+				}, 
+				
+				"data": portfolio.map(elem => elem.num_long_term_holdings).slice(0,num_items_to_show)
+			}, 
+		]
+	}
+	eChart_5.setOption(option5);
+	eChart_5.resize();
 	}
 }
 /*****E-Charts function end*****/
