@@ -136,6 +136,52 @@ if (count($_SESSION['txns']) > 0)
 		
 	}
 
+	list_of_404 = []; //List of quotes url that returned 404/not found
+	function updatePortfolioValue()
+	{
+		for(var i =0; i<portfolio.length; i++)
+		{
+			(function(i){//Protect i so that the getJSON runs for EACH value of i
+			var url = "https://api.robinhood.com/quotes/" + portfolio[i].symbol + "/";
+			if(!list_of_404.includes(url))// If url is NOT known to return 404
+			{
+			$.getJSON(url, function(quote){ })
+				.success(function(quote) {
+					portfolio[i]['cur_bid_price']=parseFloat(quote.bid_price);
+					if (i==portfolio.length-2)//Schedule the next portoflio update
+						portfolio_value_refresher = setTimeout(setPortfolioValue, 3000);
+				})
+				.fail(function(quote){ /*console.log("Failed fetching quote for:",portfolio[i].symbol);*/ portfolio[i]['cur_bid_price'] = 0.0;
+			list_of_404.push(url);
+				})
+				;
+			}
+			})(i);
+
+		}
+
+	}
+
+	function getPortfolioValue()
+	{
+		return	portfolio.reduce((prevValue, item) => prevValue + (item.num_shares * item.cur_bid_price), 0.0);
+
+	}
+
+	const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+	// 4. Refresh/update portfolio value; This method refreshes itself after every x msec
+
+	// 5. Set portfolio value
+	function setPortfolioValue()
+	{
+		updatePortfolioValue();
+		portfolio_value = getPortfolioValue();
+		$('#portfolioValue .counter-anim').text("$" + numberWithCommas(Math.round(portfolio_value * 100)/ 100));//Round to two digits after decimal
+
+	}
+	setPortfolioValue();// This function will call schedule period calls to itself
 	
 	
 </script>
