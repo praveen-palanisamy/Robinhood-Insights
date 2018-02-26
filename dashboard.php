@@ -118,11 +118,25 @@ if (count($_SESSION['txns']) > 0)
 
 		}
 
-		
+		// 3. Sort portfolio based on total (cost) weight
+
+		function compareValue(a,b)
+		{
+			a_value = a.num_shares * a.avg_cost_per_share; 
+			b_value = b.num_shares * b.avg_cost_per_share; 
+			if (a_value == b_value)
+				return 0;
+			else
+				return (a_value > b_value) ? -1 : 1;// High to low
+			
+		}
+		portfolio.sort(compareValue);//Descending order based on value
+
+		portfolio = portfolio.filter(item => item.num_shares > 0); //Discard empty holdings
 		
 	}
 
-		
+	
 	
 </script>
 
