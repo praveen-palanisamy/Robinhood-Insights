@@ -14,7 +14,10 @@ if (count($_SESSION['txns']) > 0)
 
 		}
 
-
+		usort($transactions, "date_compare");
+		
+		
+		$cols = array_keys($_SESSION['txns'][0]);
 }
 ?>
 <!DOCTYPE html>
@@ -40,7 +43,90 @@ if (count($_SESSION['txns']) > 0)
 
 <!-- jQuery -->
 <script src="vendors/bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
 
+	var Queue = function() {
+				 var functionSet=(function() {
+					 var _elements=[]; // creating a private array
+					 return [
+					 // put function
+					 function()
+						{ return _elements.push .apply(_elements,arguments); },
+					  // get function
+					 function()
+						{ return _elements.shift .apply(_elements,arguments); },
+					 function() { return _elements.length; },
+					 function(n) { return _elements.length=n; }];
+				 })();
+				 this.put=functionSet[0];
+				 this.get=functionSet[1];
+				 this.getLength=functionSet[2];
+				 this.setLength=functionSet[3];
+				 // initializing the queue with given arguments
+				 this.put.apply(this,arguments);
+	};
+
+	var txns = <?php echo json_encode($transactions); ?>;
+	//Calculate Holdings
+	if(Array.isArray(txns) && txns.length)
+	{
+		//Cols: "average_price", "name", "quantity", "side", "symbol", "updated_at" 
+		
+		// 1. Keep track of the buy/sell to calc holdings per stock in a FIFO Queue
+		var txnsQ ={};
+		for (var i=0 ; i< txns.length ; i++)
+		{
+			var stockName = txns[i]['symbol'];
+			if (txnsQ[stockName] == undefined)
+				txnsQ[stockName] = new Queue();
+			
+			var qty = txns[i]['quantity'];
+			if (txns[i]['side'] == 'buy')
+			{
+				for( var t=0; t < qty; t++)
+					txnsQ[stockName].put([ txns[i]['name'], txns[i]['updated_at'], txns[i]['average_price'] ]);
+			}
+
+			if ( txns[i]['side'] == 'sell')
+			{
+				for(var t=0; t < qty; t++)
+					var temp = txnsQ[stockName].get(); // Pop sold shares out of the holdings Q
+			}
+		}
+
+		// 2. 
+
+		portfolio=[];
+
+		one_year_ago= new Date(); one_year_ago.setMonth(one_year_ago.getMonth() - 12);
+		for(var key in txnsQ)
+		{
+			var shares=[], num_shares=0, avg_cost=0.0, longT_holdings=0;
+			while ( txnsQ[key].getLength())
+			{
+				var item = txnsQ[key].get();
+				shares.push(item);
+				num_shares++;
+				avg_cost= avg_cost + parseFloat(item[2]);//average_price
+				purchase_date = new Date(item[1]);//updated_at
+				if ( purchase_date < one_year_ago)//Buy date b4 1 yr
+					longT_holdings++;
+
+			}
+
+			portfolio.push({'symbol':key, 'shares':shares, 'num_shares':num_shares, 'avg_cost_per_share':avg_cost/num_shares, 'num_long_term_holdings':longT_holdings});
+
+		}
+
+		
+		
+	}
+
+		
+	
+</script>
+
+<!--END -->
 
 <body>
   <!-- Preloader -->
